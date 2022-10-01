@@ -95,6 +95,7 @@ headerTemplate.innerHTML = `
       display: flex;
       align-items: center;
       padding:10px;
+      cursor: pointer;
     }
 
     #dummy {
@@ -118,6 +119,14 @@ headerTemplate.innerHTML = `
     .svg-icon circle {
       stroke: #4691f6;
       stroke-width: 1;
+    }
+
+    #profile-expand {
+      display: none;
+      background: var(--bg);
+      position: absolute;
+      top: 100%;
+      right: 0;
     }
     
   </style>
@@ -162,8 +171,13 @@ headerTemplate.innerHTML = `
       </nav>
     </div>
     
-    <div id="profile">
+    <div id="profile" class="sub-content">
         <img src="avtar.png" alt="avtar" id="dummy"/>
+        <div id="profile-expand">
+          <button id = "cross">X</button>
+          <p>Expand Profile</p>
+          <button id="edit-profile">Edit profile</button>
+        </div>
     </div>
   </header>
 `;
@@ -183,6 +197,10 @@ class Header extends HTMLElement {
     this.heading = this.shadowRoot.querySelector("#header-name");
 
     this.currentLocation = this.shadowRoot.querySelector("#current-location");
+
+    this.profile = this.shadowRoot.querySelector("#profile");
+
+    this.cross = this.shadowRoot.querySelector("#cross");
   }
 
   connectedCallback() {
@@ -210,6 +228,16 @@ class Header extends HTMLElement {
 
     $(this.currentLocation).click(function(){
       locationUpdate();
+    })
+
+    $(this.profile).click(function(e){
+      console.log($(e.currentTarget).children("div"));
+      $(e.currentTarget).children("div").css("display", "block");
+    })
+
+    $(this.cross).click(function(e){
+      e.stopPropagation();
+      $(e.target).parent().hide();
     })
   }
 
