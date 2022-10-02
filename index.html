@@ -98,37 +98,6 @@
       color: black;
     }
 
-    #home {
-      width: 100%;
-      height: calc(100vh - 40px);
-    }
-
-    header {
-      background-color: var(--bg);
-      width: 100vw;
-      height: 40px;
-      position: fixed;
-      top: 0;
-      right: 0;
-      left: 0;
-      z-index: 1;
-    }
-
-    header #header {
-      float: left;
-      width: calc(100vw - 34px);
-    }
-
-    p#heading {
-      text-align: center;
-      color: rgb(236, 238, 245);
-      margin: 0;
-      padding: 10px 0;
-      cursor: pointer;
-      font-family: "Raleway", sans-serif;
-      font-weight: bold;
-    }
-
     header #menu {
       float: right;
       width: 24px;
@@ -217,7 +186,7 @@
       overflow: auto;
     }
 
-    #attendance-form {
+    #entry-form {
       margin: auto;
       font-family: Raleway;
       padding: 5px;
@@ -225,7 +194,7 @@
       min-width: 200px;
     }
 
-    #attendance-form h3 {
+    #entry-form h3 {
       text-align: center;
       margin: auto auto 10px;
       border-bottom: 1px solid rgba(100, 100, 100, 0.3);
@@ -235,7 +204,8 @@
     input[type="date"],
     .desg,
     select,
-    input[type="time"] {
+    input[type="time"],
+    textarea {
       padding: 10px;
       width: 100%;
       font-family: Raleway;
@@ -445,13 +415,116 @@
     <div id="entrypage">
       <header-component></header-component>
       <div id="entry-form">
+        <h3>Visiting detail of beneficiary CWSN:</h3>
+        <div class="row">
+          <div class="col-25">
+            <label for="school" class="que">School</label>
+          </div>
+          <div class="col-75">
+            <input type="text" id="school" name="SCHOOL" readonly required>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-25">
+            <label for="class" class="que">Class</label>
+          </div>
+          <div class="col-75">
+            <select
+              id="class"
+              name="CLASS"
+              required
+            >
+              <option value="" selected>Class...</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-25">
+            <label for="cwsnName" class="que">Name of CWSN</label>
+          </div>
+          <div class="col-75">
+            <input
+              type="text"
+              id="cwsnName"
+              name="CWSN"
+              placeholder="Name of CwSN..."
+              required
+            />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-25">
+            <label for="studentId" class="que">Roll number</label>
+          </div>
+          <div class="col-75">
+            <input
+              type="text"
+              id="studentId"
+              name="CWSN"
+              placeholder="Roll number..."
+              required
+            />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-25">
+            <label for="disablity" class="que">Type of disability</label>
+          </div>
+          <div class="col-75">
+            <select
+              id="disablity"
+              name="DISABLITY"
+              required
+            >
+              <option value="" selected>disability type...</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-25">
+            <label for="assistProvide" class="que"
+              >Assistance provided</label
+            >
+          </div>
+          <div class="col-75">
+            <select
+              id="assistProvide"
+              name="ASSISTANCE PROVIDED"
+              required
+            >
+              <option value="" selected>assistance Provided...</option>
+              <option value="academic">Academic</option>
+              <option value="therapy">Therapy</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-25">
+            <label for="comment" class="que">Comment</label>
+          </div>
+          <div class="col-75">
+            <textarea id="comment" name="comment" rows="6" placeholder="details of assistance provide..." required></textarea>
+          </div>
+        </div>
+
+        <button type="button" id="save">Save</button>
+      </div>
+
+      <!--
+      <div id="entry-form">
         <form
           id="attendance-form"
           method="post"
           action="https://script.google.com/macros/s/AKfycbyArxMeP7wIzpAuJ3FRlOHcKY15tPlX0fY4g66h9dMlh9jmJw4EwiVxRBJa7Dq0KmGd1A/exec"
         >
-          <h3>Daily performace reporting:</h3>
-          <!-- One "tab" for each step in the form:-->
+          <h3>Visiting detail of beneficiary CWSN:</h3>
+          < One "tab" for each step in the form:>
           <div class="tab">
             <span>Visited schools detail:</span>
             <div class="row">
@@ -620,7 +693,7 @@
             </div>
           </div>
 
-          <!--Circles which indicates the steps of the form-->
+          <Circles which indicates the steps of the form>
           <div style="text-align: center; margin-top: 40px">
             <span class="step"></span>
             <span class="step"></span>
@@ -628,6 +701,7 @@
           </div>
         </form>
       </div>
+    -->
     </div>  
 
 
