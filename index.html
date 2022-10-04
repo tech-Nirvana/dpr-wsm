@@ -54,16 +54,46 @@
       z-index: 3;
     }
 
-    #popup {
+    #dialog-container{
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    dialog {
+      display:flex;
+      flex-direction: column;
       width: 380px;
       height: 180px;
       box-shadow: 0px 4px 16px 8px rgba(0, 0, 0, 0.2);
-      border-radius: 5px;
       padding: 2px;
+      position: relative;
+      border: 1px solid #ccc
+    }
+
+    #dialog-subject{
+      text-align: center;
+      margin:0;
+      padding:10px;
+      border-bottom: 1px solid #ccc;
+    }
+
+    #dialog-close{
+      font-size: 24px;
+      cursor: pointer;
       position: absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
+      right: 5px;
+      top: 5px;
+    }
+
+    .dialog-btn{
+      width: 120px;
+      padding: auto;
+      float: right;
+      margin-left: 10px;
+    }
+
+    #dialog-add{
       display: none;
     }
 
@@ -370,7 +400,8 @@
       height: 100vh;
     }
 
-    #homepage, #entrypage {
+    #homepage,
+    #entrypage {
       display: none;
     }
   </style>
@@ -378,10 +409,22 @@
   <body>
     <div id="loader" class="center"></div>
 
-    <div id="popup">
-      <h1></h1>
-      <p id="msg"></p>
-      <button>Ok</button>
+    <div id="dialog-container" class="center">
+      <dialog>
+        <div id="dialog-header">
+          <h3 id="dialog-subject"></h3>
+          <span id="dialog-close">&times;</span>
+        </div>
+
+        <div id="dialog-body">
+          <p id="dialog-message"></p>
+        </div>
+
+        <div id="dialog-footer">
+          <button id="dialog-ok" class="dialog-btn">OK</button>
+          <button id="dialog-add" class="dialog-btn">Add another</button>
+        </div>
+      </dialog>
     </div>
 
     <div id="login-box-outer">
@@ -411,7 +454,7 @@
         </div>
       </div>
     </div>
-    
+
     <div id="entrypage">
       <header-component></header-component>
       <div id="entry-form">
@@ -421,20 +464,16 @@
             <label for="school" class="que">School</label>
           </div>
           <div class="col-75">
-            <input type="text" id="school" name="SCHOOL" readonly required>
+            <input type="text" id="school" name="SCHOOL" readonly required />
           </div>
         </div>
 
         <div class="row">
           <div class="col-25">
-            <label for="class" class="que">Class</label>
+            <label for="std" class="que">Class</label>
           </div>
           <div class="col-75">
-            <select
-              id="class"
-              name="CLASS"
-              required
-            >
+            <select id="std" name="CLASS" required>
               <option value="" selected>Class...</option>
             </select>
           </div>
@@ -475,11 +514,7 @@
             <label for="disablity" class="que">Type of disability</label>
           </div>
           <div class="col-75">
-            <select
-              id="disablity"
-              name="DISABLITY"
-              required
-            >
+            <select id="disablity" name="DISABLITY" required>
               <option value="" selected>disability type...</option>
             </select>
           </div>
@@ -487,16 +522,10 @@
 
         <div class="row">
           <div class="col-25">
-            <label for="assistProvide" class="que"
-              >Assistance provided</label
-            >
+            <label for="assistProvide" class="que">Assistance provided</label>
           </div>
           <div class="col-75">
-            <select
-              id="assistProvide"
-              name="ASSISTANCE PROVIDED"
-              required
-            >
+            <select id="assistProvide" name="ASSISTANCE PROVIDED" required>
               <option value="" selected>assistance Provided...</option>
               <option value="academic">Academic</option>
               <option value="therapy">Therapy</option>
@@ -509,204 +538,22 @@
             <label for="comment" class="que">Comment</label>
           </div>
           <div class="col-75">
-            <textarea id="comment" name="comment" rows="6" placeholder="details of assistance provide..." required></textarea>
+            <textarea
+              id="comment"
+              name="comment"
+              rows="6"
+              placeholder="details of assistance provide..."
+              required
+            ></textarea>
           </div>
         </div>
 
         <button type="button" id="save">Save</button>
       </div>
-
-      <!--
-      <div id="entry-form">
-        <form
-          id="attendance-form"
-          method="post"
-          action="https://script.google.com/macros/s/AKfycbyArxMeP7wIzpAuJ3FRlOHcKY15tPlX0fY4g66h9dMlh9jmJw4EwiVxRBJa7Dq0KmGd1A/exec"
-        >
-          <h3>Visiting detail of beneficiary CWSN:</h3>
-          < One "tab" for each step in the form:>
-          <div class="tab">
-            <span>Visited schools detail:</span>
-            <div class="row">
-              <div class="col-25">
-                <label for="cluster" class="que">Cluster</label>
-              </div>
-              <div class="col-75">
-                <select
-                  id="cluster"
-                  name="CLUSTER"
-                  oninput="this.className = ''"
-                  required
-                >
-                  <option value="" selected>Cluster Name...</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-25">
-                <label for="school" class="que">School</label>
-              </div>
-              <div class="col-75">
-                <select
-                  id="school"
-                  name="SCHOOL"
-                  oninput="this.className = ''"
-                  required
-                >
-                  <option value="" selected>School Name...</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-25">
-                <label for="visitTime" class="que">Visiting Time</label>
-              </div>
-              <div class="col-75">
-                <input type="time" id="visitTime" name="VISIT-TIME" />
-              </div>
-            </div>
-            <button class="addAnotherRecord">Add</button>
-          </div>
-
-          <div class="tab">
-            Details of beneficiary CwSN:
-            <div class="row">
-              <div class="col-25">
-                <label for="cwsnName" class="que">Name of CWSN</label>
-              </div>
-              <div class="col-75">
-                <input
-                  type="text"
-                  id="cwsnName"
-                  name="CWSN"
-                  placeholder="Name of CwSN..."
-                  oninput="this.className = ''"
-                  required
-                />
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-25">
-                <label for="studentId" class="que">Roll number</label>
-              </div>
-              <div class="col-75">
-                <input
-                  type="text"
-                  id="studentId"
-                  name="CWSN"
-                  placeholder="10 digit student ID..."
-                  oninput="this.className = ''"
-                  required
-                />
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-25">
-                <label for="disablity" class="que">Disability</label>
-              </div>
-              <div class="col-75">
-                <select
-                  id="disablity"
-                  name="DISABLITY"
-                  oninput="this.className = ''"
-                  required
-                >
-                  <option value="" selected>disability type...</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-25">
-                <label for="class" class="que">Class</label>
-              </div>
-              <div class="col-75">
-                <select
-                  id="class"
-                  name="CLASS"
-                  oninput="this.className = ''"
-                  required
-                >
-                  <option value="" selected>Class...</option>
-                  <option value="kg">KG</option>
-                  <option value="i">I</option>
-                  <option value="ii">II</option>
-                  <option value="iii">III</option>
-                  <option value="iv">IV</option>
-                  <option value="v">V</option>
-                  <option value="vi">VI</option>
-                  <option value="vii">VII</option>
-                  <option value="viii">VIII</option>
-                  <option value="ix">IX</option>
-                  <option value="x">X</option>
-                  <option value="xi">XI</option>
-                  <option value="xii">XII</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-25">
-                <label for="schCwsn" class="que">SChool</label>
-              </div>
-              <div class="col-75">
-                <select
-                  id="schCwsn"
-                  name="SCHOOL"
-                  oninput="this.className = ''"
-                  required
-                >
-                  <option value="" selected>School...</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-25">
-                <label for="assistProvide" class="que"
-                  >Assistance provided</label
-                >
-              </div>
-              <div class="col-75">
-                <select
-                  id="assistProvide"
-                  name="ASSISTANCE PROVIDED"
-                  oninput="this.className = ''"
-                  required
-                >
-                  <option value="" selected>assistance Provided...</option>
-                  <option value="academic">Academic</option>
-                  <option value="therapy">Therapy</option>
-                </select>
-              </div>
-            </div>
-            <button class="addAnotherRecord">Add</button>
-          </div>
-
-          <div style="overflow: auto">
-            <div style="float: right; margin-top: 10px">
-              <button type="button" id="nextBtn">Next</button>
-            </div>
-          </div>
-
-          <Circles which indicates the steps of the form>
-          <div style="text-align: center; margin-top: 40px">
-            <span class="step"></span>
-            <span class="step"></span>
-            <span class="step"></span>
-          </div>
-        </form>
-      </div>
-    -->
-    </div>  
-
+    </div>
 
     <div id="reports">
-      <p style="text-align:center">Reports</p>
+      <p style="text-align: center">Reports</p>
       <table id="reportTable"></table>
     </div>
 
@@ -724,11 +571,12 @@
           })
           .then(() => {
             $("#loader").css("display", "none");
+            populateDisablity();
           })
           .catch((er) => alert(er.message));
       });
 
-      var userID, visitorID;
+      var userID, visitorID, user={};
 
       block.addEventListener("change", function () {
         populateDesignation(rtList, this.value);
@@ -739,14 +587,21 @@
         populateName(rtList, this.value);
       });
 
-      $("#name").change(function(){
-        for(var i=0; i<rtList.length; i++){
-          if(($("#block").val()==rtList[i]["BLOCK"])&&($("#designation").val()==rtList[i]["DESIGNATION"])&&($("#name").val()==rtList[i]["NAME"])){
-            userID=rtList[i]["USER-ID"]; //this will be used to show user specific information
+      $("#name").change(function () {
+        for (var i = 0; i < rtList.length; i++) {
+          if (
+            $("#block").val() == rtList[i]["BLOCK"] &&
+            $("#designation").val() == rtList[i]["DESIGNATION"] &&
+            $("#name").val() == rtList[i]["NAME"]
+          ) {
+            userID = user.id = rtList[i]["USER-ID"]; //this will be used to show user specific information
+            user.name = rtList[i]["NAME"];
+            user.block = rtList[i]["BLOCK"];
+            user.desg = rtList[i]["DESIGNATION"];
             break;
           }
         }
-      })
+      });
 
       $("#continue").click(function () {
         var creds = $("#login-form select");
@@ -793,7 +648,8 @@
         }
       });
 
-      var schUrl = 'https://script.google.com/macros/s/AKfycbz6waG92zWuAA2XghbHR5a566w-v-Zc0iVKSF1RBjiCZr2YZ26cH5e8olKsWKZZA7Q/exec';
+      var schUrl =
+        "https://script.google.com/macros/s/AKfycbz6waG92zWuAA2XghbHR5a566w-v-Zc0iVKSF1RBjiCZr2YZ26cH5e8olKsWKZZA7Q/exec";
 
       function showHomepage(res) {
         var authorization = false;
@@ -801,49 +657,56 @@
           authorization = true;
           var url = schUrl + "?block=" + $("#block").val();
           fetch(url)
-          .then(response=>response.json())
-          .then((data)=>{
-            schList = data;
-          }).then(()=>{
-            $("#loader").css("display", "none");
-            $("#login-box-outer").css("display", "none");
-            $("#homepage").css("display", "block");
-          })
-          .catch((er) => er.message);
+            .then((response) => response.json())
+            .then((data) => {
+              schList = data;
+            })
+            .then(() => {
+              $("#loader").css("display", "none");
+              $("#login-box-outer").css("display", "none");
+              $("#homepage").css("display", "block");
+            })
+            .catch((er) => er.message);
         }
 
-        if(!authorization){
+        if (!authorization) {
           $("#loader").css("display", "none");
           alert(`Server message: ${res.result}`);
         }
       }
 
       //code for home
-    var entryform = document.getElementById("form-shortcut");
-    //var menu = document.getElementById("menu");
-    var entry = document.getElementById("entry-form");
-    //var reports = document.getElementById("reports");
+      var entryform = document.getElementById("form-shortcut");
+      //var menu = document.getElementById("menu");
+      var entry = document.getElementById("entry-form");
+      //var reports = document.getElementById("reports");
 
-    entryform.addEventListener("click", function () {
-      $("#homepage").css("display", "none");
-      $("#entrypage").css("display", "block");
-      //$("#drop-icon ul").css("display", "none");
-    });
+      entryform.addEventListener("click", function () {
+        $("#homepage").css("display", "none");
+        $("#entrypage").css("display", "block");
+        //$("#drop-icon ul").css("display", "none");
+      });
 
-    var minDistance=10000000, lo;
+      var minDistance = 10000000, lo;
 
-    function locationUpdate(){
-      if(navigator.geolocation){
-        navigator.geolocation.getCurrentPosition(successCallback, errorCallbak, {
-         timeout: 30000,
-         enableHighAccuracy: true,
-         maximumAge: Infinity
-     });
-      }else{
-        alert("Geolocation is not supported by your browser");
+      function locationUpdate() {
+        if (navigator.geolocation) {
+          $("#loader").css("display", "block");
+          navigator.geolocation.getCurrentPosition(
+            successCallback,
+            errorCallbak,
+            {
+              timeout: 30000,
+              enableHighAccuracy: true,
+              maximumAge: Infinity,
+            }
+          );
+        } else {
+          alert("Geolocation is not supported by your browser");
+        }
       }
 
-      function successCallback(position){
+      function successCallback(position) {
         var curLat = position.coords.latitude;
         var curLong = position.coords.longitude;
 
@@ -851,96 +714,129 @@
         console.log(`accuracy: ${acrcy}`);
 
         var time = position.timestamp;
-        time = new Date(time);
-        time = time.toLocaleTimeString();
+        //time = new Date(time);
+        //time = time.toLocaleTimeString();
         console.log(`timestamp: ${time}`);
 
-        //calucate distance using Haversine formula
-        function haversineDistance(currentLat, currentLong, lat, long){
-
-          //convert degree to radian
-          Number.prototype.toRad = function(){
-            return this * Math.PI / 180;
-          }
-
-          var R = 6371000; // radius of earth in meter
-          var x1 = lat-currentLat;
-          var dLat = x1.toRad();  
-          var x2 = long-currentLong;
-          var dLong = x2.toRad();  
-          var a = Math.sin(dLat/2) * Math.sin(dLat/2) + 
-                Math.cos(currentLat.toRad()) * Math.cos(lat.toRad()) * 
-                Math.sin(dLong/2) * Math.sin(dLong/2);  
-          var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-          var distance = R * c;
-          return distance;
-        }
-
-        for(var i=0; i<schList.length; i++){
-          var dist1 = haversineDistance(curLat, curLong, schList[i]["latitude"], schList[i]["longitude"]);
-          if(dist1<minDistance){
+        for (var i = 0; i < schList.length; i++) {
+          var dist1 = haversineDistance(
+            curLat,
+            curLong,
+            schList[i]["latitude"],
+            schList[i]["longitude"]
+          );
+          if (dist1 < minDistance) {
             minDistance = dist1;
             lo = i;
-            console.log(`SL no: ${lo} distance: ${minDistance}`);
           }
         }
+        $("#loader").css("display", "none");
+        $("#dialog-container").css("display", "flex");
+        $("#dialog-subject").text("Location captured successfully!");
 
-        $("#popup").css("display", "block");
-        $("#popup h1").text("Success!");
-        $("#popup p").text(`latitude: ${curLat}, longitude: ${curLong}. ${minDistance} meters from ${schList[lo]["school_name"]}`);
-        $("#popup button").click(function(e){
-          $(e.target).parent().css("display", "none");
-        });
+        if(minDistance<200){
+          $("#dialog-message").text(
+            `latitude: ${curLat}, longitude: ${curLong}. ${minDistance} meters from ${schList[lo]["school_name"]}`
+          );
+          $("#school").val(schList[lo]["school_name"]);
+          populateClass(schList[lo]["school_category"]);
+        }else{
+          $("#dialog-message").text(`You are ${minDistance} meters away from ${schList[lo]["school_name"]}`);
+        } 
       }
+      
 
-      function errorCallbak(error){
+      function errorCallbak(error) {
+        $("#loader").css("display", "none");
         alert(`Error message: ${error.message}`);
       }
-    }
 
-    function haversineDistance(currentLat, currentLong, lat, long){
+      $("#dialog-close").click(function (e) {
+        $("#dialog-container").css("display", "none");
+      });
 
-      //convert degree to radian
-      Number.prototype.toRad = function(){
-        return this * Math.PI / 180;
+      $("#dialog-footer:contains(OK)").click(function (e) {
+        $("#dialog-container").css("display", "none");
+      });
+
+      //calucate distance using Haversine formula
+      function haversineDistance(currentLat, currentLong, lat, long) {
+        //convert degree to radian
+        Number.prototype.toRad = function () {
+          return (this * Math.PI) / 180;
+        };
+
+        var R = 6371000; // radius of earth in meter
+        var x1 = lat - currentLat;
+        var dLat = x1.toRad();
+        var x2 = long - currentLong;
+        var dLong = x2.toRad();
+        var a =
+          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+          Math.cos(currentLat.toRad()) *
+            Math.cos(lat.toRad()) *
+            Math.sin(dLong / 2) *
+            Math.sin(dLong / 2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        var distance = R * c;
+        return distance;
       }
 
-      var R = 6371000; // radius of earth in km
-      var x1 = lat-currentLat;
-      var dLat = x1.toRad();  
-      var x2 = long-currentLong;
-      var dLong = x2.toRad();  
-      var a = Math.sin(dLat/2) * Math.sin(dLat/2) + 
-            Math.cos(currentLat.toRad()) * Math.cos(lat.toRad()) * 
-            Math.sin(dLong/2) * Math.sin(dLong/2);  
-      var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-      var distance = R * c;
+      function populateClass(category) {
+        switch (category) {
+          case "Elementary with grades 1 to 8":
+            classAray = ["1", "2", "3", "4", "5", "6", "7", "8"];
+            break;
+          case "Higher Secondary":
+            classAray = ["11", "12"];
+            break;
+          case "Higher Secondary with grades 1 to 12":
+            classAray = [
+              "1",
+              "2",
+              "3",
+              "4",
+              "5",
+              "6",
+              "7",
+              "8",
+              "9",
+              "10",
+              "11",
+              "12",
+            ];
+            break;
+          case "Higher Secondary with grades 6 to 12":
+            classAray = ["6", "7", "8", "9", "10", "11", "12"];
+            break;
+          case "Primary":
+            classAray = ["1", "2", "3", "4", "5"];
+            break;
+          case "Secondary":
+            classAray = ["9", "10"];
+            break;
+          case "Secondary with grades 1 to 10":
+            classAray = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
+            break;
+          case "Secondary with Higher Secondary with grades 9 to 12":
+            classAray = ["9", "10", "11", "12"];
+            break;
+          case "Upper Primary":
+            classAray = ["6", "7", "8"];
+            break;
+          case "Upper Primary with Secondary with grades 6 to 10":
+            classAray = ["6", "7", "8", "9", "10"];
+            break;
+        }
 
-      console.log(distance);
-    }
+        for (var i = 0; i < classAray.length; i++) {
+          var option = document.createElement("option");
+          option.value = classAray[i];
+          option.text = classAray[i];
+          $("#std").append(option);
+        }
+      }
 
-    $("#find-location").click(function(){
-      haversineDistance(22.529559194768126, 85.81541158505311, 22.61911, 85.84140);
-    });
-
-    
-
-      //code for entry form
-      var tabs = document.getElementsByClassName("tab");
-      var rtList = [];
-      var schList = [];
-      //var block = document.getElementById("block");
-      var desg = document.getElementsByName("desg");
-      var nme = document.getElementById("nme");
-      var month = document.getElementById("month");
-      var date = document.getElementById("date");
-      var cluster = document.getElementById("cluster");
-      var schName = document.getElementById("school");
-      var currentTab = 0;
-      var addAnotherRecord =
-        document.getElementsByClassName("addAnotherRecord");
-      var cwsnSch = document.getElementById("schCwsn");
-      var disability = document.getElementById("disablity");
       var disablities = [
         "Blindness",
         "Low-vision",
@@ -964,6 +860,65 @@
         "Acid Attack victim",
         "Parkinson's disease",
       ];
+      var disability = document.getElementById("disablity");
+
+      function populateDisablity() {
+        for (var i = 0; i < disablities.length; i++) {
+          var option = document.createElement("option");
+          option.value = disablities[i];
+          option.text = disablities[i];
+          disability.appendChild(option);
+        }
+      }
+
+      function validateEntry() {
+        var valid = true;
+
+        var fields = $(
+          "#entry-form input, #entry-form select, #entry-form textarea"
+        );
+        for (var i = 0; i < fields.length; i++) {
+          if (fields[i].value == "") {
+            //add an 'invalid' class to the field
+            $(fields[i]).addClass("invalid");
+            //and set the current valid status to false
+            valid = false;
+          }
+        }
+        return valid;
+      }
+
+      $("#save").click(function () {
+        if (!validateEntry()) {
+          alert("Mandatory fields can't be empty");
+          return false;
+        }
+
+        //function here to add cwsn visit data to cwsn visit object
+
+        //popup dialog box to show next process
+        $("#dialog-container").css("display", "flex");
+        $("#dialog-subject").text("Saved successfully!");
+        $("#dialog-message").text("Proceed further with appropriate option");
+        $("#dialog-ok").text("submit");
+        $("#dialog-add").css("display", "block");
+      });
+      //code for entry form
+      var tabs = document.getElementsByClassName("tab");
+      var rtList = [];
+      var schList = [];
+      //var block = document.getElementById("block");
+      var desg = document.getElementsByName("desg");
+      var nme = document.getElementById("nme");
+      var month = document.getElementById("month");
+      var date = document.getElementById("date");
+      var cluster = document.getElementById("cluster");
+      var schName = document.getElementById("school");
+      var currentTab = 0;
+      var addAnotherRecord =
+        document.getElementsByClassName("addAnotherRecord");
+      var cwsnSch = document.getElementById("schCwsn");
+      
       var cwsnName = document.getElementById("cwsnName");
       var tempSch = [];
       var cwsnArray = [];
@@ -974,7 +929,7 @@
       var visitSummary = document.getElementById("visitSummary");
       var cwsnReport = document.getElementById("cwsnReport");
 
-      showTab(currentTab);
+      //showTab(currentTab);
 
       function showTab(n) {
         // This function will display the specified tab of the form...
@@ -1110,12 +1065,6 @@
         x[n].className += " active";
       }
 
-      function resetDesg() {
-        desg.forEach(function (i) {
-          i.checked = false;
-        });
-      }
-
       function populateBlock(ar) {
         var blockArray = [];
         var arrayLength = ar.length;
@@ -1246,12 +1195,6 @@
         }
       }
 
-      for (i of desg) {
-        i.onchange = function () {
-          populateName(this.value);
-        };
-      }
-
       //function to save visited schools in array
       function addSchool() {
         if (!validateForm()) {
@@ -1287,15 +1230,6 @@
         }
       }
 
-      function populateDisablity() {
-        for (var i = 0; i < disablities.length; i++) {
-          var option = document.createElement("option");
-          option.value = disablities[i];
-          option.text = disablities[i];
-          disability.appendChild(option);
-        }
-      }
-
       function addCwsn() {
         var x,
           y,
@@ -1328,7 +1262,7 @@
       }
       addAnotherRecord[1].addEventListener("click", addCwsn);
 
-    /*$("#cwsnReport").click(function (e) {
+      /*$("#cwsnReport").click(function (e) {
       e.stopPropagation();
       home.style.display = "none";
       entry.style.display = "none";
