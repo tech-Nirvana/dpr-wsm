@@ -122,11 +122,50 @@ headerTemplate.innerHTML = `
     }
 
     #profile-expand {
+      position: relative;
       display: none;
-      background: var(--bg);
+      background: white;
+      color: black;
       position: absolute;
       top: 100%;
       right: 0;
+      width: 200px;
+      padding: 10px;
+      box-shadow: 0px 4px 16px 8px rgba(0, 0, 0, 0.2);
+      cursor: auto;
+    }
+
+    #profile-image{
+      display: block;
+      width:100px;
+      margin: auto;
+    }
+
+    #cross {
+      position : absolute;
+      top: 0px;
+      right: 5px;
+      cursor: pointer
+    }
+
+    table{
+      font-size :10px;
+      margin: auto;
+    }
+
+    th{
+      text-align: right;
+    }
+
+    #edit-profile {
+      width: 100%;
+      float:right;
+      border: none;
+      background: var(--bg);
+      color:white;
+      padding:5px auto;
+      border-radius:5px;
+      cursor: pointer;
     }
     
   </style>
@@ -174,8 +213,26 @@ headerTemplate.innerHTML = `
     <div id="profile" class="sub-content">
         <img src="avtar.png" alt="avtar" id="dummy"/>
         <div id="profile-expand">
-          <button id = "cross">X</button>
-          <p>Expand Profile</p>
+          <img src="avtar.png" alt="avtar" id="profile-image"/>
+          <span id = "cross">&times;</span>
+          <table id = "profile-detail">
+            <tr>
+              <th scope="row">User-ID:</th>
+              <td id="u-id"></td>
+            </tr>
+            <tr>
+              <th scope="row">Name:</th>
+              <td id="u-name"></td>
+            </tr>
+            <tr>
+              <th scope="row">Block:</th>
+              <td id="u-block"></td>
+            </tr>
+            <tr>
+              <th scope="row">Designation:</th>
+              <td id="u-desg"></td>
+            </tr>
+          </table>
           <button id="edit-profile">Edit profile</button>
         </div>
     </div>
@@ -198,9 +255,27 @@ class Header extends HTMLElement {
 
     this.currentLocation = this.shadowRoot.querySelector("#current-location");
 
-    this.profile = this.shadowRoot.querySelector("#profile");
+    var profile = this.shadowRoot.querySelector("#profile");
+    profile.addEventListener("click", this.expandProfile.bind(this));
 
     this.cross = this.shadowRoot.querySelector("#cross");
+  }
+
+  expandProfile(e) {
+    console.log($(e.currentTarget).children("div"));
+    $(e.currentTarget).children("div").css("display", "block");
+
+    var uId = this.shadowRoot.querySelector("#u-id");
+    uId.textContent = user.id;
+
+    var uName = this.shadowRoot.querySelector("#u-name");
+    uName.textContent = user.name;
+
+    var uBlock = this.shadowRoot.querySelector("#u-block");
+    uBlock.textContent = user.block;
+
+    var uDesg = this.shadowRoot.querySelector("#u-desg");
+    uDesg.textContent = user.desg;
   }
 
   connectedCallback() {
@@ -228,11 +303,6 @@ class Header extends HTMLElement {
 
     $(this.currentLocation).click(function(){
       locationUpdate();
-    })
-
-    $(this.profile).click(function(e){
-      console.log($(e.currentTarget).children("div"));
-      $(e.currentTarget).children("div").css("display", "block");
     })
 
     $(this.cross).click(function(e){
