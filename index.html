@@ -31,6 +31,8 @@
     *::after,
     *::before {
       box-sizing: inherit;
+      margin: 0;
+      padding: 0;
     }
 
     :root {
@@ -41,6 +43,15 @@
     body {
       margin: 0;
       background-color: #fdfcdc;
+    }
+
+    .center {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      margin: auto;
     }
 
     #loader {
@@ -54,62 +65,58 @@
       z-index: 3;
     }
 
-    #dialog-container{
-      display: none;
-      align-items: center;
-      justify-content: center;
-    }
-
-    dialog {
-      display:flex;
-      flex-direction: column;
-      width: 380px;
-      height: 180px;
-      box-shadow: 0px 4px 16px 8px rgba(0, 0, 0, 0.2);
-      padding: 2px;
-      position: relative;
-      border: 1px solid #ccc
-    }
-
-    #dialog-subject{
-      text-align: center;
-      margin:0;
-      padding:10px;
-      border-bottom: 1px solid #ccc;
-    }
-
-    #dialog-close{
-      font-size: 24px;
-      cursor: pointer;
-      position: absolute;
-      right: 5px;
-      top: 5px;
-    }
-
-    .dialog-btn{
-      width: 120px;
-      padding: auto;
-      float: right;
-      margin-left: 10px;
-    }
-
-    #dialog-add{
-      display: none;
-    }
-
     @keyframes spin {
       100% {
         transform: rotate(360deg);
       }
     }
 
-    .center {
+    #dialog-container {
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    dialog {
+      display: flex;
+      flex-direction: column;
+      width: 380px;
+      box-shadow: 0px 4px 16px 8px rgba(0, 0, 0, 0.2);
+      padding: 5px;
+      position: relative;
+      border: 1px solid #ccc;
+    }
+
+    #dialog-subject {
+      text-align: center;
+      line-height: 16px;
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+    }
+
+    #dialog-close {
+      font-size: 24px;
+      cursor: pointer;
       position: absolute;
+      right: 5px;
       top: 0;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      margin: auto;
+    }
+
+    #dialog-body {
+      min-height: 120px;
+      overflow-y: auto;
+      padding: 5px;
+    }
+
+    .dialog-btn {
+      width: 120px;
+      padding: auto;
+      float: right;
+      margin-left: 10px;
+    }
+
+    #dialog-add {
+      display: none;
     }
 
     #reports {
@@ -219,9 +226,10 @@
     #entry-form {
       margin: auto;
       font-family: Raleway;
-      padding: 5px;
-      max-width: 800px;
+      padding: 5px 10px;
+      max-width: 670px;
       min-width: 200px;
+      box-shadow: 0px 4px 16px 8px rgba(0, 0, 0, 0.2);
     }
 
     #entry-form h3 {
@@ -231,10 +239,7 @@
     }
 
     input[type="text"],
-    input[type="date"],
-    .desg,
     select,
-    input[type="time"],
     textarea {
       padding: 10px;
       width: 100%;
@@ -245,12 +250,10 @@
       background-color: white;
     }
 
-    .radiolabel {
-      display: block;
-    }
-
-    .tab {
-      display: none;
+    #save-form {
+      float: right;
+      width: 120px;
+      margin: 12px 0;
     }
 
     button {
@@ -266,27 +269,6 @@
     button:hover {
       opacity: 0.8;
       box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-    }
-
-    /* Make circles that indicate the steps of the form: */
-    .step {
-      height: 15px;
-      width: 15px;
-      margin: 0 2px;
-      background-color: #bbbbbb;
-      border: none;
-      border-radius: 50%;
-      display: inline-block;
-      opacity: 0.5;
-    }
-
-    .step.active {
-      opacity: 1;
-    }
-
-    /* Mark the steps that are finished and valid: */
-    .step.finish {
-      background-color: var(--bg);
     }
 
     /* Style the label to display next to the inputs */
@@ -314,11 +296,6 @@
       content: "";
       display: table;
       clear: both;
-    }
-
-    .addAnotherRecord {
-      float: left;
-      margin-top: 10px;
     }
 
     /* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
@@ -387,21 +364,18 @@
     }
 
     #login-form #continue {
-      padding: 10px;
+      width: 100%;
       margin-bottom: 40%;
     }
 
-    button#continue {
-      width: 100%;
-      cursor: pointer;
-    }
     #login-box-outer {
       position: relative;
       height: 100vh;
     }
 
     #homepage,
-    #entrypage {
+    #entrypage,
+    #reportpage {
       display: none;
     }
   </style>
@@ -421,8 +395,8 @@
         </div>
 
         <div id="dialog-footer">
-          <button id="dialog-ok" class="dialog-btn">OK</button>
-          <button id="dialog-add" class="dialog-btn">Add another</button>
+          <button id="dialog-ok" class="dialog-btn"></button>
+          <button id="dialog-add" class="dialog-btn"></button>
         </div>
       </dialog>
     </div>
@@ -447,7 +421,6 @@
 
     <div id="homepage">
       <header-component></header-component>
-
       <div id="dashboard">
         <div id="form-shortcut">
           <i class="material-icons">add_circle</i>
@@ -457,7 +430,7 @@
 
     <div id="entrypage">
       <header-component></header-component>
-      <div id="entry-form">
+      <form id="entry-form">
         <h3>Visiting detail of beneficiary CWSN:</h3>
         <div class="row">
           <div class="col-25">
@@ -481,12 +454,12 @@
 
         <div class="row">
           <div class="col-25">
-            <label for="cwsnName" class="que">Name of CWSN</label>
+            <label for="cwsn-name" class="que">Name of CWSN</label>
           </div>
           <div class="col-75">
             <input
               type="text"
-              id="cwsnName"
+              id="cwsn-name"
               name="CWSN"
               placeholder="Name of CwSN..."
               required
@@ -496,12 +469,12 @@
 
         <div class="row">
           <div class="col-25">
-            <label for="studentId" class="que">Roll number</label>
+            <label for="roll-no" class="que">Roll number</label>
           </div>
           <div class="col-75">
             <input
               type="text"
-              id="studentId"
+              id="roll-no"
               name="CWSN"
               placeholder="Roll number..."
               required
@@ -548,8 +521,8 @@
           </div>
         </div>
 
-        <button type="button" id="save">Save</button>
-      </div>
+        <button type="button" id="save-form">Save</button>
+      </form>
     </div>
 
     <div id="reports">
@@ -558,6 +531,7 @@
     </div>
 
     <script>
+      var disability = document.querySelector("#disablity");
       var rtUrl =
         "https://script.google.com/macros/s/AKfycbw_fHDEJBeGeF2ALbFP7kzo1q0L6wKCtbNcfKQGaWeBB-nBOzDZLcbmpz7sQNemUCo/exec";
       window.addEventListener("DOMContentLoaded", function () {
@@ -573,10 +547,26 @@
             $("#loader").css("display", "none");
             populateDisablity();
           })
-          .catch((er) => alert(er.message));
+          .catch((er) => {
+            $("#dialog-container").css("display", "flex");
+            $("#dialog-subject").text("Server message!");
+            $("#dialog-message").text(er.message);
+            $("#dialog-ok").text("Close");
+            buttonWithText("Close").addEventListener('click',function(){
+              $("#dialog-container").css("display", "none");
+            })
+          });
+
+          document.querySelector("#entry-form").reset();
       });
 
-      var userID, visitorID, user={};
+      var rtList,
+        schList,
+        userID,
+        visitorID,
+        user = {},
+        record = {};
+        cwsnArray = [];
 
       block.addEventListener("change", function () {
         populateDesignation(rtList, this.value);
@@ -587,6 +577,60 @@
         populateName(rtList, this.value);
       });
 
+      function populateBlock(ar) {
+        var blockArray = [];
+        var arrayLength = ar.length;
+        for (var i = 0; i < arrayLength; i++) {
+          if (blockArray.indexOf(ar[i]["BLOCK"]) === -1) {
+            blockArray.push(ar[i]["BLOCK"]);
+          }
+        }
+
+        for (var j = 0; j < blockArray.length; j++) {
+          var option = document.createElement("option");
+          option.value = blockArray[j];
+          option.text = blockArray[j];
+          $("#block").append(option);
+        }
+      }
+
+      function populateDesignation(obj, blk) {
+        $("#designation").children().not(":first").remove();
+        var desgArray = [];
+        for (var i = 0; i < obj.length; i++) {
+          if (
+            obj[i]["BLOCK"].toLowerCase() === blk.toLowerCase() &&
+            desgArray.indexOf(obj[i]["DESIGNATION"]) === -1
+          ) {
+            desgArray.push(obj[i]["DESIGNATION"]);
+          }
+        }
+
+        for (var j = 0; j < desgArray.length; j++) {
+          var option = document.createElement("option");
+          option.value = desgArray[j];
+          option.text = desgArray[j];
+          $("#designation").append(option);
+        }
+      }
+
+      //Populate name of RT/Therapist on basis of block and designation in first tab
+      function populateName(obj, des) {
+        //Before populating the name first clear the previously populated dropdown(except placeholder)
+        $("#name").children().not(":first").remove();
+        for (var i = 0; i < obj.length; i++) {
+          if (
+            obj[i]["BLOCK"] == $("#block").val() &&
+            obj[i]["DESIGNATION"] == des
+          ) {
+            var option = document.createElement("option");
+            option.value = obj[i]["NAME"];
+            option.text = obj[i]["NAME"];
+            $("#name").append(option);
+          }
+        }
+      }
+
       $("#name").change(function () {
         for (var i = 0; i < rtList.length; i++) {
           if (
@@ -594,7 +638,7 @@
             $("#designation").val() == rtList[i]["DESIGNATION"] &&
             $("#name").val() == rtList[i]["NAME"]
           ) {
-            userID = user.id = rtList[i]["USER-ID"]; //this will be used to show user specific information
+            userID = record.userId = user.id = rtList[i]["USER-ID"]; //this will be used to show user specific information
             user.name = rtList[i]["NAME"];
             user.block = rtList[i]["BLOCK"];
             user.desg = rtList[i]["DESIGNATION"];
@@ -675,30 +719,28 @@
         }
       }
 
-      //code for home
+      //code for entry form shortcut icon
       var entryform = document.getElementById("form-shortcut");
-      //var menu = document.getElementById("menu");
-      var entry = document.getElementById("entry-form");
-      //var reports = document.getElementById("reports");
-
       entryform.addEventListener("click", function () {
         $("#homepage").css("display", "none");
         $("#entrypage").css("display", "block");
-        //$("#drop-icon ul").css("display", "none");
       });
 
-      var minDistance = 10000000, lo;
+      var minDistance = 10000000,
+        lo;
 
       function locationUpdate() {
         if (navigator.geolocation) {
           $("#loader").css("display", "block");
+          $("#homepage").css("display", "block");
+          $("#entrypage").css("display", "none");
           navigator.geolocation.getCurrentPosition(
             successCallback,
             errorCallbak,
             {
-              timeout: 30000,
+              timeout: 60000,
               enableHighAccuracy: true,
-              maximumAge: Infinity,
+              maximumAge: 0,
             }
           );
         } else {
@@ -713,10 +755,10 @@
         var acrcy = position.coords.accuracy;
         console.log(`accuracy: ${acrcy}`);
 
-        var time = position.timestamp;
+        var locationUpateTime = (record.timeStamp = position.timestamp);
         //time = new Date(time);
         //time = time.toLocaleTimeString();
-        console.log(`timestamp: ${time}`);
+        console.log(`timestamp: ${locationUpateTime}`);
 
         for (var i = 0; i < schList.length; i++) {
           var dist1 = haversineDistance(
@@ -734,30 +776,66 @@
         $("#dialog-container").css("display", "flex");
         $("#dialog-subject").text("Location captured successfully!");
 
-        if(minDistance<200){
+        if (minDistance < 1000) {
+          record.visitedSchool = schList[lo]["school_name"];
           $("#dialog-message").text(
-            `latitude: ${curLat}, longitude: ${curLong}. ${minDistance} meters from ${schList[lo]["school_name"]}`
+            `Currently you are in ${schList[lo]["school_name"]}.\n
+            Proceed to fill CWSN visit detail.`
           );
+          $("#dialog-ok").text("Go to form");
+          $("#dialog-add").css("display", "block").text("Cancel");
           $("#school").val(schList[lo]["school_name"]);
           populateClass(schList[lo]["school_category"]);
-        }else{
-          $("#dialog-message").text(`You are ${minDistance} meters away from ${schList[lo]["school_name"]}`);
-        } 
+
+          buttonWithText("Go to form").addEventListener('click', function(){
+            $("#dialog-container").css("display", "none");
+            $("#homepage").css("display", "none");
+            $("#entrypage").css("display", "block");
+          })
+
+          buttonWithText("Cancel").addEventListener('click', function(){
+            $("#dialog-container").css("display", "none");
+          })
+        } else {
+          $("#dialog-message").text(
+            `You are ${minDistance} meters away from ${schList[lo]["school_name"]}`
+          );
+          $("#dialog-ok").text("Close");
+        }
+
+        buttonWithText("Close").addEventListener('click', function(){
+            $("#dialog-container").css("display", "none");
+          })
       }
-      
 
       function errorCallbak(error) {
         $("#loader").css("display", "none");
         alert(`Error message: ${error.message}`);
       }
 
-      $("#dialog-close").click(function (e) {
+      $("#dialog-close").click(function () {
         $("#dialog-container").css("display", "none");
       });
 
-      $("#dialog-footer:contains(OK)").click(function (e) {
-        $("#dialog-container").css("display", "none");
-      });
+      function buttonWithText(txt) {
+        txtFilter = function (node) {
+          if (node.data == txt) {
+            return NodeFilter.FILTER_ACCEPT;
+          }
+        };
+        var rootNode = document.querySelector("#dialog-footer");
+        var walker = document.createTreeWalker(
+          rootNode,
+          NodeFilter.SHOW_TEXT,
+          txtFilter,
+          false
+        );
+
+        while (walker.nextNode()) {
+          return walker.currentNode.parentNode;
+          break;
+        }
+      }      
 
       //calucate distance using Haversine formula
       function haversineDistance(currentLat, currentLong, lat, long) {
@@ -779,7 +857,7 @@
             Math.sin(dLong / 2);
         var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         var distance = R * c;
-        return distance;
+        return Math.round(distance);
       }
 
       function populateClass(category) {
@@ -837,7 +915,8 @@
         }
       }
 
-      var disablities = [
+      function populateDisablity() {
+        var disablities = [
         "Blindness",
         "Low-vision",
         "Leprosy Cured persons",
@@ -860,9 +939,6 @@
         "Acid Attack victim",
         "Parkinson's disease",
       ];
-      var disability = document.getElementById("disablity");
-
-      function populateDisablity() {
         for (var i = 0; i < disablities.length; i++) {
           var option = document.createElement("option");
           option.value = disablities[i];
@@ -888,21 +964,67 @@
         return valid;
       }
 
-      $("#save").click(function () {
+      $("#save-form").click(function () {
         if (!validateEntry()) {
           alert("Mandatory fields can't be empty");
           return false;
         }
 
         //function here to add cwsn visit data to cwsn visit object
+        pushCwsnDetail();
 
         //popup dialog box to show next process
         $("#dialog-container").css("display", "flex");
         $("#dialog-subject").text("Saved successfully!");
         $("#dialog-message").text("Proceed further with appropriate option");
-        $("#dialog-ok").text("submit");
-        $("#dialog-add").css("display", "block");
+        $("#dialog-ok").text("submit form");
+        $("#dialog-add").css("display", "block").text("Add another");
+
+        buttonWithText("submit form").addEventListener('click', function(){
+          record.cwsnVisit = cwsnArray;
+          $.ajax({
+            url: "https://script.google.com/macros/s/AKfycbxtq8ajYimx3phRIZ9s4sz16fqIyuagR7e9kk7sFNkl-nI-21OLiMcuXL8vUpxTPAi0wQ/exec",
+            timeout: 10000,
+            data: { Content: JSON.stringify(record) },
+            type: "POST",
+            dataType: "json",
+          })
+            .done(function (json) {
+              alert("success");
+              cwsnArray = [];
+            })
+            .fail(function (xhr, status, errorThrown) {
+              alert("Error: " + errorThrown);
+            });
+
+          $("#dialog-container").css("display", "none");
+          $("#entrypage").css("display", "none");
+          $("#homepage").css("display", "block");
+        })
+
+        buttonWithText("Add another").addEventListener('click', function(){
+          $("#dialog-container").css("display", "none");
+          $("#entrypage").css("display", "block");
+        })
       });
+
+      function pushCwsnDetail() {
+        var cwsnObj = {};
+        cwsnObj.name = $("#cwsn-name").val();
+        cwsnObj.class = $("#std").val();
+        cwsnObj.rollNo = $("#roll-no").val();
+        cwsnObj.disability = $("#disablity").val();
+        cwsnObj.assistance = $("#assistProvide").val();
+        cwsnObj.comments = $("#comment").val();
+
+        cwsnArray.push(cwsnObj);
+
+        document.querySelector("#entry-form").reset();
+        $("#school").val(schList[lo]["school_name"]);
+      }
+
+      
+      /*
       //code for entry form
       var tabs = document.getElementsByClassName("tab");
       var rtList = [];
@@ -1063,60 +1185,6 @@
         }
         //... and adds the "active" class on the current step:
         x[n].className += " active";
-      }
-
-      function populateBlock(ar) {
-        var blockArray = [];
-        var arrayLength = ar.length;
-        for (var i = 0; i < arrayLength; i++) {
-          if (blockArray.indexOf(ar[i]["BLOCK"]) === -1) {
-            blockArray.push(ar[i]["BLOCK"]);
-          }
-        }
-
-        for (var j = 0; j < blockArray.length; j++) {
-          var option = document.createElement("option");
-          option.value = blockArray[j];
-          option.text = blockArray[j];
-          $("#block").append(option);
-        }
-      }
-
-      function populateDesignation(obj, blk) {
-        $("#designation").children().not(":first").remove();
-        var desgArray = [];
-        for (var i = 0; i < obj.length; i++) {
-          if (
-            obj[i]["BLOCK"].toLowerCase() === blk.toLowerCase() &&
-            desgArray.indexOf(obj[i]["DESIGNATION"]) === -1
-          ) {
-            desgArray.push(obj[i]["DESIGNATION"]);
-          }
-        }
-
-        for (var j = 0; j < desgArray.length; j++) {
-          var option = document.createElement("option");
-          option.value = desgArray[j];
-          option.text = desgArray[j];
-          $("#designation").append(option);
-        }
-      }
-
-      //Populate name of RT/Therapist on basis of block and designation in first tab
-      function populateName(obj, des) {
-        //Before populating the name first clear the previously populated dropdown(except placeholder)
-        $("#name").children().not(":first").remove();
-        for (var i = 0; i < obj.length; i++) {
-          if (
-            obj[i]["BLOCK"] == $("#block").val() &&
-            obj[i]["DESIGNATION"] == des
-          ) {
-            var option = document.createElement("option");
-            option.value = obj[i]["NAME"];
-            option.text = obj[i]["NAME"];
-            $("#name").append(option);
-          }
-        }
       }
 
       function populateDate() {
