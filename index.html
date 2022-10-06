@@ -776,7 +776,7 @@
         $("#dialog-container").css("display", "flex");
         $("#dialog-subject").text("Location captured successfully!");
 
-        if (minDistance < 1000) {
+        if (minDistance < 400000) {
           record.visitedSchool = schList[lo]["school_name"];
           $("#dialog-message").text(
             `Currently you are in ${schList[lo]["school_name"]}.\n
