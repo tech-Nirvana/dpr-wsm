@@ -801,11 +801,10 @@
             `You are ${minDistance} meters away from ${schList[lo]["school_name"]}`
           );
           $("#dialog-ok").text("Close");
-        }
-
-        buttonWithText("Close").addEventListener('click', function(){
+          buttonWithText("Close").addEventListener('click', function(){
             $("#dialog-container").css("display", "none");
           })
+        }
       }
 
       function errorCallbak(error) {
@@ -817,6 +816,7 @@
         $("#dialog-container").css("display", "none");
       });
 
+      //function to return element based on their text content inside it
       function buttonWithText(txt) {
         txtFilter = function (node) {
           if (node.data == txt) {
@@ -909,6 +909,8 @@
             break;
         }
 
+        //Before populating the class first clear the previously populated dropdown(except placeholder)
+        $("#std").children().not(":first").remove();
         for (var i = 0; i < classAray.length; i++) {
           var option = document.createElement("option");
           option.value = classAray[i];
@@ -988,6 +990,7 @@
           $("#dialog-ok:contains(Submit form)").off("click");
         })
 
+        $("#dialog-ok:contains(Submit form)").off("click");
         $("#dialog-ok:contains(Submit form)").click(function(e){
           e.preventDefault();
           record.cwsnVisit = cwsnArray;

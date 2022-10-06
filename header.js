@@ -129,7 +129,7 @@ headerTemplate.innerHTML = `
       position: absolute;
       top: 100%;
       right: 0;
-      width: 200px;
+      width: 250px;
       padding: 10px;
       box-shadow: 0px 4px 16px 8px rgba(0, 0, 0, 0.2);
       cursor: auto;
