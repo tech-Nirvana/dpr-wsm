@@ -821,6 +821,8 @@
         txtFilter = function (node) {
           if (node.data == txt) {
             return NodeFilter.FILTER_ACCEPT;
+          } else {
+            return NodeFilter.FILTER_SKIP;
           }
         };
         var rootNode = document.querySelector("#dialog-footer");
@@ -832,7 +834,7 @@
         );
 
         while (walker.nextNode()) {
-          return walker.currentNode.parentNode;
+          return buttonNode =  walker.currentNode.parentNode;
           break;
         }
       }      
@@ -964,7 +966,7 @@
         return valid;
       }
 
-      $("#save-form").click(function () {
+      $("#save-form").click(function (e) {
         if (!validateEntry()) {
           alert("Mandatory fields can't be empty");
           return false;
@@ -973,14 +975,21 @@
         //function here to add cwsn visit data to cwsn visit object
         pushCwsnDetail();
 
-        //popup dialog box to show next process
+        //popup dialog box to show next process to choose
         $("#dialog-container").css("display", "flex");
         $("#dialog-subject").text("Saved successfully!");
         $("#dialog-message").text("Proceed further with appropriate option");
-        $("#dialog-ok").text("submit form");
+        $("#dialog-ok").text("Submit form");
         $("#dialog-add").css("display", "block").text("Add another");
 
-        buttonWithText("submit form").addEventListener('click', function(){
+        buttonWithText("Add another").addEventListener('click', function(e){
+          $("#dialog-container").css("display", "none");
+          $("#entrypage").css("display", "block");
+          $("#dialog-ok:contains(Submit form)").off("click");
+        })
+
+        $("#dialog-ok:contains(Submit form)").click(function(e){
+          e.preventDefault();
           record.cwsnVisit = cwsnArray;
           $.ajax({
             url: "https://script.google.com/macros/s/AKfycbxtq8ajYimx3phRIZ9s4sz16fqIyuagR7e9kk7sFNkl-nI-21OLiMcuXL8vUpxTPAi0wQ/exec",
@@ -1001,12 +1010,8 @@
           $("#entrypage").css("display", "none");
           $("#homepage").css("display", "block");
         })
-
-        buttonWithText("Add another").addEventListener('click', function(){
-          $("#dialog-container").css("display", "none");
-          $("#entrypage").css("display", "block");
-        })
       });
+
 
       function pushCwsnDetail() {
         var cwsnObj = {};
