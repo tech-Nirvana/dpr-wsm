@@ -294,6 +294,7 @@ class Header extends HTMLElement {
     this.attendanceForm.addEventListener('click', function(){
       $("#homepage").css("display", "none");
       $("#entrypage").css("display", "block");
+      resetSchool();
     });
 
     $(this.heading).click(function(){

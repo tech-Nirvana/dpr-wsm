@@ -250,10 +250,11 @@
       background-color: white;
     }
 
-    #save-form {
+    #save-form, #reset-form {
       float: right;
       width: 120px;
-      margin: 12px 0;
+      margin: 12px;
+      margin-right: 0;
     }
 
     button {
@@ -520,8 +521,8 @@
             ></textarea>
           </div>
         </div>
-
         <button type="button" id="save-form">Save</button>
+        <button type="button" id="reset-form">Reset</button>
       </form>
     </div>
 
@@ -719,11 +720,20 @@
         }
       }
 
+      function resetSchool(){
+        var timeNow = new Date();
+        if((!record.timeStamp)||(timeNow-record.timeStamp>1800000)){
+          $("#school").val("");
+          $("#std").children().not(":first").remove();
+        }
+      }
+
       //code for entry form shortcut icon
       var entryform = document.getElementById("form-shortcut");
       entryform.addEventListener("click", function () {
         $("#homepage").css("display", "none");
         $("#entrypage").css("display", "block");
+        resetSchool();
       });
 
       var minDistance = 10000000,
@@ -755,7 +765,7 @@
         var acrcy = position.coords.accuracy;
         console.log(`accuracy: ${acrcy}`);
 
-        var locationUpateTime = (record.timeStamp = position.timestamp);
+        var locationUpateTime = record.timeStamp = position.timestamp;
         //time = new Date(time);
         //time = time.toLocaleTimeString();
         console.log(`timestamp: ${locationUpateTime}`);
@@ -1006,6 +1016,7 @@
               cwsnArray = [];
             })
             .fail(function (xhr, status, errorThrown) {
+              cwsnArray = [];
               alert("Error: " + errorThrown);
             });
 
@@ -1013,6 +1024,13 @@
           $("#entrypage").css("display", "none");
           $("#homepage").css("display", "block");
         })
+      });
+
+      $("#reset-form").click(function(){
+        document.querySelector("#entry-form").reset();
+        if($("#school").val()!=undefined){
+          $("#school").val(schList[lo]["school_name"]);
+        }
       });
 
 
