@@ -259,6 +259,10 @@ class Header extends HTMLElement {
     profile.addEventListener("click", this.expandProfile.bind(this));
 
     this.cross = this.shadowRoot.querySelector("#cross");
+
+    this.cwsnReport = this.shadowRoot.querySelector("#cwsnReport");
+
+    this.visitSummary = this.shadowRoot.querySelector("#visitSummary");
   }
 
   expandProfile(e) {
@@ -294,11 +298,13 @@ class Header extends HTMLElement {
     this.attendanceForm.addEventListener('click', function(){
       $("#homepage").css("display", "none");
       $("#entrypage").css("display", "block");
+      $("#profile-expand").css("display", "none");
     });
 
     $(this.heading).click(function(){
       $("#homepage").css("display", "block");
       $("#entrypage").css("display", "none");
+      $("#profile-expand").css("display", "none");
     });
 
     $(this.currentLocation).click(function(){
@@ -308,6 +314,22 @@ class Header extends HTMLElement {
     $(this.cross).click(function(e){
       e.stopPropagation();
       $(e.target).parent().hide();
+    })
+
+    $(this.cwsnReport).click(function(e){
+      e.stopPropagation();
+      $("#profile-expand").css("display", "none");
+
+      var uId = user.id;
+      populateCwsnWiseReport(uId);
+    })
+
+    $(this.visitSummary).click(function(e){
+      e.stopPropagation();
+      $("#profile-expand").css("display", "none");
+
+      var uId = user.id;
+      
     })
   }
 

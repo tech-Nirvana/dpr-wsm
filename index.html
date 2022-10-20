@@ -119,17 +119,12 @@
       display: none;
     }
 
-    #reports {
-      position: relative;
-      display: none;
-    }
-
     td,
     th {
       border: 1px solid rgba(100, 100, 100, 0.3);
     }
 
-    #reportTable {
+    #report-table {
       border-collapse: collapse;
       margin: auto;
       color: black;
@@ -250,10 +245,11 @@
       background-color: white;
     }
 
-    #save-form {
+    #save-form, #reset-form {
       float: right;
       width: 120px;
-      margin: 12px 0;
+      margin: 12px;
+      margin-right: 0;
     }
 
     button {
@@ -520,14 +516,16 @@
             ></textarea>
           </div>
         </div>
-
         <button type="button" id="save-form">Save</button>
+        <button type="button" id="reset-form">Reset</button>
       </form>
     </div>
 
-    <div id="reports">
-      <p style="text-align: center">Reports</p>
-      <table id="reportTable"></table>
+    <div id="reportpage">
+      <header-component></header-component>
+      <table id="report-table">
+        <caption>New Table</caption>
+      </table>
     </div>
 
     <script>
@@ -719,11 +717,20 @@
         }
       }
 
+      function resetSchool(){
+        var timeNow = new Date();
+        if((!record.timeStamp)||(timeNow-record.timeStamp>1800000)){
+          $("#school").val("");
+          $("#std").children().not(":first").remove();
+        }
+      }
+
       //code for entry form shortcut icon
       var entryform = document.getElementById("form-shortcut");
       entryform.addEventListener("click", function () {
         $("#homepage").css("display", "none");
         $("#entrypage").css("display", "block");
+        resetSchool();
       });
 
       var minDistance = 10000000,
@@ -755,7 +762,7 @@
         var acrcy = position.coords.accuracy;
         console.log(`accuracy: ${acrcy}`);
 
-        var locationUpateTime = (record.timeStamp = position.timestamp);
+        var locationUpateTime = record.timeStamp = position.timestamp;
         //time = new Date(time);
         //time = time.toLocaleTimeString();
         console.log(`timestamp: ${locationUpateTime}`);
@@ -776,7 +783,7 @@
         $("#dialog-container").css("display", "flex");
         $("#dialog-subject").text("Location captured successfully!");
 
-        if (minDistance < 1000) {
+        if (minDistance < 400000) {
           record.visitedSchool = schList[lo]["school_name"];
           $("#dialog-message").text(
             `Currently you are in ${schList[lo]["school_name"]}.\n
@@ -801,11 +808,10 @@
             `You are ${minDistance} meters away from ${schList[lo]["school_name"]}`
           );
           $("#dialog-ok").text("Close");
-        }
-
-        buttonWithText("Close").addEventListener('click', function(){
+          buttonWithText("Close").addEventListener('click', function(){
             $("#dialog-container").css("display", "none");
           })
+        }
       }
 
       function errorCallbak(error) {
@@ -817,10 +823,13 @@
         $("#dialog-container").css("display", "none");
       });
 
+      //function to return element based on their text content inside it
       function buttonWithText(txt) {
         txtFilter = function (node) {
           if (node.data == txt) {
             return NodeFilter.FILTER_ACCEPT;
+          } else {
+            return NodeFilter.FILTER_SKIP;
           }
         };
         var rootNode = document.querySelector("#dialog-footer");
@@ -832,7 +841,7 @@
         );
 
         while (walker.nextNode()) {
-          return walker.currentNode.parentNode;
+          return buttonNode =  walker.currentNode.parentNode;
           break;
         }
       }      
@@ -907,6 +916,8 @@
             break;
         }
 
+        //Before populating the class first clear the previously populated dropdown(except placeholder)
+        $("#std").children().not(":first").remove();
         for (var i = 0; i < classAray.length; i++) {
           var option = document.createElement("option");
           option.value = classAray[i];
@@ -964,7 +975,7 @@
         return valid;
       }
 
-      $("#save-form").click(function () {
+      $("#save-form").click(function (e) {
         if (!validateEntry()) {
           alert("Mandatory fields can't be empty");
           return false;
@@ -973,19 +984,27 @@
         //function here to add cwsn visit data to cwsn visit object
         pushCwsnDetail();
 
-        //popup dialog box to show next process
+        //popup dialog box to show next process to choose
         $("#dialog-container").css("display", "flex");
         $("#dialog-subject").text("Saved successfully!");
         $("#dialog-message").text("Proceed further with appropriate option");
-        $("#dialog-ok").text("submit form");
+        $("#dialog-ok").text("Submit form");
         $("#dialog-add").css("display", "block").text("Add another");
 
-        buttonWithText("submit form").addEventListener('click', function(){
+        buttonWithText("Add another").addEventListener('click', function(e){
+          $("#dialog-container").css("display", "none");
+          $("#entrypage").css("display", "block");
+          $("#dialog-ok:contains(Submit form)").off("click");
+        })
+
+        $("#dialog-ok:contains(Submit form)").off("click");
+        $("#dialog-ok:contains(Submit form)").click(function(e){
+          e.preventDefault();
           record.cwsnVisit = cwsnArray;
           $.ajax({
             url: "https://script.google.com/macros/s/AKfycbxtq8ajYimx3phRIZ9s4sz16fqIyuagR7e9kk7sFNkl-nI-21OLiMcuXL8vUpxTPAi0wQ/exec",
             timeout: 10000,
-            data: { Content: JSON.stringify(record) },
+            data: { UserID: user.id, Content: JSON.stringify(record) },
             type: "POST",
             dataType: "json",
           })
@@ -994,6 +1013,7 @@
               cwsnArray = [];
             })
             .fail(function (xhr, status, errorThrown) {
+              cwsnArray = [];
               alert("Error: " + errorThrown);
             });
 
@@ -1001,12 +1021,15 @@
           $("#entrypage").css("display", "none");
           $("#homepage").css("display", "block");
         })
-
-        buttonWithText("Add another").addEventListener('click', function(){
-          $("#dialog-container").css("display", "none");
-          $("#entrypage").css("display", "block");
-        })
       });
+
+      $("#reset-form").click(function(){
+        document.querySelector("#entry-form").reset();
+        if($("#school").val()!=undefined){
+          $("#school").val(schList[lo]["school_name"]);
+        }
+      });
+
 
       function pushCwsnDetail() {
         var cwsnObj = {};
@@ -1023,7 +1046,210 @@
         $("#school").val(schList[lo]["school_name"]);
       }
 
+      var visitlog;
+      function fetchReport(id){
+        var url = 'https://script.google.com/macros/s/AKfycbw64-S8FykTraYsIkWvzb6s3d7Flr3Fze98Hab3ozFjYvP4KqpTwasIk17y2WDGjlaFtQ/exec'+'?userId='+id;
+        
+        $("#loader").css("display", "block");
+        
+        var promise = new Promise(function(resolve){
+          fetch(url)
+          .then((response) => response.json())
+          .then((data) => {
+            visitlog = data;
+            $("#loader").css("display", "none");
+            resolve(visitlog);
+          })
+        });
+        return promise;        
+      }
+
+      async function populateCwsnWiseReport(id) {
+        var responseData = await fetchReport(id);
+        console.log(responseData);
+
+        $("#report-table").children().not(":first").remove();
+
+        $("#report-table caption").text("CWSN wise visiting report");
+
+        $("#reportpage").css("display", "block");
+        $("#homepage").css("display", "none");
+        $("#entrypage").css("display", "none");
+
+        var reportTable = document.getElementById("report-table");
+
+        var headerRow = document.createElement("tr");
+
+        var slNo = document.createElement("th");
+        slNo.textContent = "Sl No";
+        headerRow.appendChild(slNo);
+
+        var dateHeader = document.createElement("th");
+        dateHeader.textContent = "Date of visit";
+        headerRow.appendChild(dateHeader);
+
+        var cwsnHeader = document.createElement("th");
+        cwsnHeader.textContent = "Name of CWSN";
+        headerRow.appendChild(cwsnHeader);
+
+        var disabilityHeader = document.createElement("th");
+        disabilityHeader.textContent = "Type of disability";
+        headerRow.appendChild(disabilityHeader);
+
+        var rollNoHeader = document.createElement("th");
+        rollNoHeader.textContent = "Roll No";
+        headerRow.appendChild(rollNoHeader);
+
+        var classHeader = document.createElement("th");
+        classHeader.textContent = "Class";
+        headerRow.appendChild(classHeader);
+
+        var schHeader = document.createElement("th");
+        schHeader.textContent = "School";
+        headerRow.appendChild(schHeader);
+
+        var blockHeader = document.createElement("th");
+        blockHeader.textContent = "Block";
+        headerRow.appendChild(blockHeader);
+
+        var assistHeader = document.createElement("th");
+        assistHeader.textContent = "Assistance provided";
+        headerRow.appendChild(assistHeader);
+
+        var remarkHeader = document.createElement("th");
+        remarkHeader.textContent = "Remarks";
+        headerRow.appendChild(remarkHeader);
+
+        reportTable.appendChild(headerRow);
+
+      var rows = responseData.length,
+        cwsnCount;
+      var slCounter = 1;
+      for (var i = 0; i < rows; i++) {
+        cwsnCount = responseData[i]["Content"]["cwsnVisit"].length;
+        for (var j = 0; j < cwsnCount; j++) {
+          var tRow = document.createElement("tr");
+
+          var sl = document.createElement("td");
+          sl.textContent = slCounter++;
+          tRow.appendChild(sl);
+
+          var dt = new Date(responseData[i]["Content"]["timeStamp"]).toLocaleDateString('pt-PT');
+          var date = document.createElement("td");
+          date.textContent = dt;
+          tRow.appendChild(date);
+
+          var cwsnName = document.createElement("td");
+          cwsnName.textContent =
+          responseData[i]["Content"]["cwsnVisit"][j]["name"].toUpperCase();
+          tRow.appendChild(cwsnName);
+
+          var disability = document.createElement("td");
+          disability.textContent =
+          responseData[i]["Content"]["cwsnVisit"][j]["disability"].toUpperCase();
+          tRow.appendChild(disability);
+
+          var rollNo = document.createElement("td");
+          rollNo.textContent =
+          responseData[i]["Content"]["cwsnVisit"][j]["rollNo"].toUpperCase();
+          tRow.appendChild(rollNo);
+
+          var std = document.createElement("td");
+          std.textContent =
+          responseData[i]["Content"]["cwsnVisit"][j]["class"].toUpperCase();
+          tRow.appendChild(std);
+
+          var sch = document.createElement("td");
+          sch.textContent = responseData[i]["Content"]["visitedSchool"];
+          tRow.appendChild(sch);
+
+          var block = document.createElement("td");
+          block.textContent = user.block;
+          tRow.appendChild(block);
+
+          var assist = document.createElement("td");
+          assist.textContent =
+          responseData[i]["Content"]["cwsnVisit"][j]["assistance"].toUpperCase();
+          tRow.appendChild(assist);
+
+          var remark = document.createElement("td");
+          remark.textContent =
+          responseData[i]["Content"]["cwsnVisit"][j]["comments"].toUpperCase();
+          tRow.appendChild(remark);
+
+          reportTable.appendChild(tRow);
+        }
+      }
+    }
+
+    async function populateVisitSummary(ar) {
+      var responseData = await fetchReport(id);
+      console.log(responseData);
+
+      $("#report-table").children().not(":first").remove();
+
+      $("#report-table caption").text("CWSN wise visiting report");
+
+      $("#reportpage").css("display", "block");
+      $("#homepage").css("display", "none");
+      $("#entrypage").css("display", "none");
+
+      var reportTable = document.getElementById("report-table");
       
+      var headerRow = document.createElement("tr");
+
+      var dateHeader = document.createElement("th");
+      dateHeader.textContent = "Date of visit";
+      headerRow.appendChild(dateHeader);
+
+      var resourcePerson = document.createElement("th");
+      resourcePerson.textContent = "Name of Resource person";
+      headerRow.appendChild(resourcePerson);
+
+      var blockHeader = document.createElement("th");
+      blockHeader.textContent = "Name of block";
+      headerRow.appendChild(blockHeader);
+
+      var visitedSchHeader = document.createElement("th");
+      visitedSchHeader.textContent = "Count of visited school";
+      headerRow.appendChild(visitedSchHeader);
+
+      var cwsnCountHeader = document.createElement("th");
+      cwsnCountHeader.textContent = "Count of benefitted CWSN";
+      headerRow.appendChild(cwsnCountHeader);
+
+      reportTable.appendChild(headerRow);
+
+      var rows = ar.length;
+      for (var i = 0; i < rows; i++) {
+        var tRow = document.createElement("tr");
+
+        var date = document.createElement("td");
+        date.textContent = ar[i]["Content"]["dateOfVisit"];
+        tRow.appendChild(date);
+
+        var empName = document.createElement("td");
+        empName.textContent = ar[i]["Content"]["empName"];
+        tRow.appendChild(empName);
+
+        var block = document.createElement("td");
+        block.textContent = ar[i]["Content"]["block"];
+        tRow.appendChild(block);
+
+        var schCount = document.createElement("td");
+        schCount.textContent = ar[i]["Content"]["visitedSchool"].length;
+        tRow.appendChild(schCount);
+
+        var cwsnCount = document.createElement("td");
+        cwsnCount.textContent = ar[i]["Content"]["cwsnVisit"].length;
+        tRow.appendChild(cwsnCount);
+
+        reports.appendChild(reportTable).appendChild(tRow);
+      }
+    }
+
+
+      //fetchReport(user.id);
       /*
       //code for entry form
       var tabs = document.getElementsByClassName("tab");
